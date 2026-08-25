@@ -172,6 +172,25 @@ BAR=""
 for ((i = 0; i < F; i++)); do BAR+='█'; done
 for ((i = F; i < 10; i++)); do BAR+='░'; done
 
+# ── Absolute-token alert (independent of window-percentage coloring) ──
+# TIN is the real input-token count reported by CC (-1 when unavailable, e.g.
+# older CC versions); fall back to PCT*CTX so the alert still works then.
+WARN_TOKENS="${CLAUDE_PACE_WARN_TOKENS:-100000}"
+ALERT_TOKENS="${CLAUDE_PACE_ALERT_TOKENS:-200000}"
+if [[ "$TIN" =~ ^[0-9]+$ ]] && ((TIN >= 0)); then
+  ABS_TOKENS=$TIN
+else
+  ABS_TOKENS=$((PCT * CTX / 100))
+fi
+ALERT_MARK=""
+if ((ABS_TOKENS >= ALERT_TOKENS)); then
+  BC=$R
+  ALERT_MARK=" ${R}⚠${N}"
+elif ((ABS_TOKENS >= WARN_TOKENS)); then
+  BC=$Y
+  ALERT_MARK=" ${Y}⚠${N}"
+fi
+
 # ── Git Info (5s disposable cache) ──
 # Cache key encodes DIR so concurrent sessions in different repos don't clash.
 # Records are disposable: anything unreadable or torn falls through to the
@@ -266,8 +285,10 @@ _usage() {
 # ── Output Assembly (symmetric single-pipe alignment) ──
 
 # Build plain-text left sections for width measurement (no ANSI codes).
+ALERT_MARK_PLAIN=""
+[[ -n "$ALERT_MARK" ]] && ALERT_MARK_PLAIN=" ⚠"
 L1_PLAIN="${MODEL} ${EF}"
-L2_PLAIN="${BAR} ${PCT}% ${CL}"
+L2_PLAIN="${BAR} ${PCT}% ${CL}${ALERT_MARK_PLAIN}"
 # Pad shorter side so | aligns on both lines.
 W1=${#L1_PLAIN} W2=${#L2_PLAIN}
 PAD1="" PAD2=""
@@ -281,7 +302,7 @@ fi
 L1="${C}${MODEL} ${EF}${N}${PAD1} ${D}|${N}  ${L1R}"
 
 # Line 2: bar pct% CL | 5h used% ...  7d used% ...
-L2="${BC}${BAR}${N} ${PCT}% ${CL}${PAD2} ${D}|${N}  5h $(_usage "$U5" "$RM5" 300)  7d $(_usage "$U7" "$RM7" 10080)"
+L2="${BC}${BAR}${N} ${PCT}% ${CL}${ALERT_MARK}${PAD2} ${D}|${N}  5h $(_usage "$U5" "$RM5" 300)  7d $(_usage "$U7" "$RM7" 10080)"
 # Session cost: only when usage data is unavailable in stdin.
 if [[ "$SHOW_COST" == "1" ]]; then
   printf -v _CS "\$%.2f" "$COST" 2>/dev/null

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.5
+
+- Add absolute-token alert thresholds: the bar and context label turn yellow at 100k input tokens and red at 200k, independent of window-percentage coloring. On a large-window model (e.g. Opus at 1M) the existing percentage-based coloring never turns yellow/red until you're most of the way through the window, so a session burning 100k-200k tokens still looked "green" even though that's a meaningful absolute cost. Thresholds are configurable via `CLAUDE_PACE_WARN_TOKENS` (default 100000) and `CLAUDE_PACE_ALERT_TOKENS` (default 200000); a `⚠` marker is appended next to the context label when either fires. Falls back to `used_percentage * context_window_size` when `total_input_tokens` is unavailable (older CC), same fallback pattern as the auto-compact-window tracking
+
 ## 0.9.4
 
 - Install from tagged releases instead of `main` on every channel (https://github.com/Astro-Han/claude-pace/issues/16). Until now both the manual `curl` and `/claude-pace:setup` fetched `raw.githubusercontent.com/.../main/claude-pace.sh`, so what you installed was whatever `main` happened to be at that second — not a version anyone could name, reproduce, or roll back to. Releases, tags and the npm package recorded versions but were never what shipped

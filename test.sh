@@ -572,6 +572,25 @@ else
   echo "    spawned: $TMPF_SPAWNS"
 fi
 
+# ── Test 31: Absolute-token alert thresholds ──
+# Bar/text turn yellow at 100k input tokens and red at 200k, independent of the
+# window-percentage coloring, so a large-window model (e.g. 1M) still warns at a
+# meaningful absolute cost even though 100k-200k is a low percentage of it.
+echo "Test 31: absolute-token alert thresholds"
+OUTPUT=$(run '{"model":{"display_name":"Sonnet 5"},"workspace":{"project_dir":"'"$PWD"'"},"context_window":{"used_percentage":10,"context_window_size":1000000,"total_input_tokens":50000}}')
+assert_line_not "no warning mark below 100k tokens" 2 '⚠'
+
+OUTPUT=$(run '{"model":{"display_name":"Sonnet 5"},"workspace":{"project_dir":"'"$PWD"'"},"context_window":{"used_percentage":10,"context_window_size":1000000,"total_input_tokens":150000}}')
+assert_line "warning mark at 150k tokens (between 100k and 200k)" 2 '⚠'
+assert_aligned "| aligned with warning mark present"
+
+OUTPUT=$(run '{"model":{"display_name":"Sonnet 5"},"workspace":{"project_dir":"'"$PWD"'"},"context_window":{"used_percentage":10,"context_window_size":1000000,"total_input_tokens":250000}}')
+assert_line "warning mark at 250k tokens (past 200k)" 2 '⚠'
+assert_aligned "| aligned with 250k warning mark present"
+
+OUTPUT=$(env CLAUDE_PACE_WARN_TOKENS=5000 CLAUDE_PACE_ALERT_TOKENS=10000 bash -c 'echo "$1" | bash claude-pace.sh' _ '{"model":{"display_name":"Sonnet 5"},"workspace":{"project_dir":"'"$PWD"'"},"context_window":{"used_percentage":1,"context_window_size":1000000,"total_input_tokens":6000}}' | strip_ansi)
+assert_line "custom CLAUDE_PACE_WARN_TOKENS/ALERT_TOKENS thresholds respected" 2 '⚠'
+
 # ── Summary ──
 echo ""
 echo "Results: $PASS passed, $FAIL failed"
