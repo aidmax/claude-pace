@@ -31,7 +31,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Astro-Han/claude-pace.git"
+    "url": "git+https://github.com/aidmax/claude-pace.git"
   },
   "engines": {
     "node": ">=16"

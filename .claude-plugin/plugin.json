@@ -9,8 +9,8 @@
   "commands": [
     "./commands/setup.md"
   ],
-  "homepage": "https://github.com/Astro-Han/claude-pace",
-  "repository": "https://github.com/Astro-Han/claude-pace",
+  "homepage": "https://github.com/aidmax/claude-pace",
+  "repository": "https://github.com/aidmax/claude-pace",
   "license": "MIT",
   "keywords": [
     "claude-code",

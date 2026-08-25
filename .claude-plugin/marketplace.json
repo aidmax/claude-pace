@@ -13,7 +13,7 @@
       "name": "claude-pace",
       "source": {
         "source": "github",
-        "repo": "Astro-Han/claude-pace",
+        "repo": "aidmax/claude-pace",
         "ref": "v0.9.5"
       },
       "description": "Lightweight statusline with quota pace tracking. Pure Bash + jq.",

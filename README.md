@@ -42,7 +42,7 @@ Requires `jq`.
 Inside Claude Code:
 
 ```
-/plugin marketplace add Astro-Han/claude-pace
+/plugin marketplace add aidmax/claude-pace
 /plugin install claude-pace
 /reload-plugins
 /claude-pace:setup
@@ -61,13 +61,13 @@ Restart Claude Code. Done.
 ```bash
 mkdir -p ~/.claude
 curl -fsSL -o ~/.claude/statusline.sh.new \
-  https://github.com/Astro-Han/claude-pace/releases/latest/download/claude-pace.sh
+  https://github.com/aidmax/claude-pace/releases/latest/download/claude-pace.sh
 mv ~/.claude/statusline.sh.new ~/.claude/statusline.sh
 chmod +x ~/.claude/statusline.sh
 ```
 
 This installs the latest release, not the current state of `main`. To pin an exact
-version, swap `latest/download` for `download/v0.9.4` (or any other tag).
+version, swap `latest/download` for `download/v0.9.5` (or any other tag).
 
 Add to `~/.claude/settings.json`:
 
